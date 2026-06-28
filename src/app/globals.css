@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+:root {
+  --sahyadri-dusk: #1c2b22;
+  --limestone: #f2ede1;
+  --monsoon-moss: #5c7a5e;
+  --laterite-rust: #b5562b;
+  --canopy-shade: #3d4f3f;
+  --old-bell-brass: #d9a441;
+}
+
+@theme inline {
+  --color-dusk: var(--sahyadri-dusk);
+  --color-limestone: var(--limestone);
+  --color-moss: var(--monsoon-moss);
+  --color-rust: var(--laterite-rust);
+  --color-canopy: var(--canopy-shade);
+  --color-brass: var(--old-bell-brass);
+
+  --font-display: "Arial Black", Arial, sans-serif;
+  --font-body: Georgia, "Times New Roman", serif;
+  --font-stat: "Courier New", Courier, monospace;
+}
+
+body {
+  background: var(--limestone);
+  color: var(--sahyadri-dusk);
+  font-family: var(--font-body);
+}
