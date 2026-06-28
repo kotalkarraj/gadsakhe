@@ -48,7 +48,7 @@ export default function TrekFilterableList({ treks }: Props) {
                 onClick={() => setRegion(r)}
                 className={`font-body text-sm px-3 py-1.5 rounded border transition-colors ${
                   region === r
-                    ? "bg-rust text-limestone border-rust"
+                    ? "bg-rust text-dusk border-rust"
                     : "bg-transparent text-dusk border-moss/40 hover:border-rust"
                 }`}
               >
@@ -69,7 +69,7 @@ export default function TrekFilterableList({ treks }: Props) {
                 onClick={() => setDifficulty(d)}
                 className={`font-body text-sm px-3 py-1.5 rounded border transition-colors ${
                   difficulty === d
-                    ? "bg-rust text-limestone border-rust"
+                    ? "bg-rust text-dusk border-rust"
                     : "bg-transparent text-dusk border-moss/40 hover:border-rust"
                 }`}
               >

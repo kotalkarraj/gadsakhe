@@ -93,7 +93,7 @@ export default function Hero({
         {ctaLabel && (
           <a
             href={ctaHref}
-            className="inline-block mt-10 bg-rust text-limestone px-6 py-3 rounded font-body text-sm sm:text-base hover:opacity-90 transition-opacity"
+            className="inline-block mt-10 bg-rust text-dusk px-6 py-3 rounded font-body text-sm sm:text-base hover:opacity-90 transition-opacity"
           >
             {ctaLabel}
           </a>

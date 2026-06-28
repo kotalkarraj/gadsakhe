@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --sahyadri-dusk: #1c2b22;
-  --limestone: #f2ede1;
-  --monsoon-moss: #5c7a5e;
-  --laterite-rust: #b5562b;
-  --canopy-shade: #3d4f3f;
-  --old-bell-brass: #d9a441;
+  --sahyadri-dusk: #0d1f17;
+  --limestone: #eef2ee;
+  --monsoon-moss: #8fd6a0;
+  --laterite-rust: #4fae6a;
+  --laterite-rust-text: #1f7a40;
+  --canopy-shade: #163627;
+  --old-bell-brass: #c98a4b;
 }
 
 @theme inline {
@@ -14,6 +15,7 @@
   --color-limestone: var(--limestone);
   --color-moss: var(--monsoon-moss);
   --color-rust: var(--laterite-rust);
+  --color-rust-text: var(--laterite-rust-text);
   --color-canopy: var(--canopy-shade);
   --color-brass: var(--old-bell-brass);
 

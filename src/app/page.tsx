@@ -31,7 +31,7 @@ export default function Home() {
           </h2>
           <a
             href="/blogs"
-            className="font-body text-sm text-rust hover:underline"
+            className="font-body text-sm text-rust-text hover:underline"
           >
             View all →
           </a>

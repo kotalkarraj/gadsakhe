@@ -190,7 +190,7 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="mt-12 pt-6 border-t border-moss/20 max-w-2xl">
               <a
                 href="/blogs"
-                className="font-body text-sm text-rust hover:underline"
+                className="font-body text-sm text-rust-text hover:underline"
               >
                 ← Back to all trek stories
               </a>
