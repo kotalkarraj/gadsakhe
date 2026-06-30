@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import type { Trek } from "@/data/treks";
+import ScrollReveal from "@/components/ScrollReveal";
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-IN", {
@@ -92,48 +93,51 @@ export default function TrekFilterableList({ treks }: Props) {
         </p>
       ) : (
         <div className="flex flex-col gap-6">
-          {filtered.map((trek) => (
-            <a
-              key={trek.slug}
-              href={`/blogs/${trek.slug}`}
-              className="group flex flex-col sm:flex-row gap-5 bg-canopy rounded overflow-hidden"
-            >
-              {/* Image */}
-              <div className="relative w-full sm:w-72 h-48 sm:h-auto flex-shrink-0 bg-dusk">
-                {trek.image && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={trek.image}
-                    alt={trek.name}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                )}
-              </div>
+          {filtered.map((trek, i) => (
+            <ScrollReveal key={trek.slug} delayMs={i * 80}>
+              <a
+                href={`/blogs/${trek.slug}`}
+                className="card-lift group flex flex-col sm:flex-row gap-5 bg-canopy rounded overflow-hidden"
+              >
+                {/* Image */}
+                <div className="relative w-full sm:w-72 h-48 sm:h-auto flex-shrink-0 bg-dusk">
+                  {trek.image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={trek.image}
+                      alt={trek.name}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  )}
+                </div>
 
-              {/* Content */}
-              <div className="flex flex-col justify-between p-5 sm:p-6 text-limestone flex-1">
-                <div>
-                  <div className="flex items-center gap-3 font-stat text-xs text-brass tracking-wider mb-2">
-                    <span>{trek.code}</span>
-                    <span className="text-moss">{formatDate(trek.date)}</span>
+                {/* Content */}
+                <div className="flex flex-col justify-between p-5 sm:p-6 text-limestone flex-1">
+                  <div>
+                    <div className="flex items-center gap-3 font-stat text-xs text-brass tracking-wider mb-2">
+                      <span>{trek.code}</span>
+                      <span className="text-moss">
+                        {formatDate(trek.date)}
+                      </span>
+                    </div>
+                    <h2 className="font-body text-xl sm:text-2xl leading-snug mb-2 group-hover:text-rust transition-colors">
+                      {trek.name}
+                    </h2>
+                    <p className="font-body text-sm text-limestone/80 leading-relaxed">
+                      {trek.excerpt}
+                    </p>
                   </div>
-                  <h2 className="font-body text-xl sm:text-2xl leading-snug mb-2 group-hover:text-rust transition-colors">
-                    {trek.name}
-                  </h2>
-                  <p className="font-body text-sm text-limestone/80 leading-relaxed">
-                    {trek.excerpt}
-                  </p>
-                </div>
 
-                <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 font-stat text-xs text-moss">
-                  <span>{trek.region}</span>
-                  <span>{trek.difficulty}</span>
-                  <span>ALT {trek.stats.altitude}</span>
-                  <span>DIST {trek.stats.distance}</span>
-                  <span>DUR {trek.stats.duration}</span>
+                  <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 font-stat text-xs text-moss">
+                    <span>{trek.region}</span>
+                    <span>{trek.difficulty}</span>
+                    <span>ALT {trek.stats.altitude}</span>
+                    <span>DIST {trek.stats.distance}</span>
+                    <span>DUR {trek.stats.duration}</span>
+                  </div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </ScrollReveal>
           ))}
         </div>
       )}

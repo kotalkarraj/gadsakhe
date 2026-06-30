@@ -60,12 +60,12 @@ export default function Hero({
       </svg>
 
       <div className="relative max-w-5xl mx-auto px-6 sm:px-10 pt-20 pb-16">
-        <h1 className="font-display text-4xl sm:text-6xl tracking-wide">
+        <h1 className="fade-up delay-1 font-display text-4xl sm:text-6xl tracking-wide">
           {title}
         </h1>
 
         {(subtitleNative || subtitleTranslation) && (
-          <p className="mt-3 italic font-body text-rust text-base sm:text-lg">
+          <p className="fade-up delay-2 mt-3 italic font-body text-rust text-base sm:text-lg">
             {subtitleNative}
             {subtitleNative && subtitleTranslation && " — "}
             {subtitleTranslation}
@@ -73,15 +73,15 @@ export default function Hero({
         )}
 
         {tagline && (
-          <p className="mt-4 font-stat text-xs sm:text-sm tracking-widest text-moss">
+          <p className="fade-up delay-3 mt-4 font-stat text-xs sm:text-sm tracking-widest text-moss">
             {tagline}
           </p>
         )}
 
-        <div className="mt-6 w-48 h-0.5 bg-rust" />
+        <div className="fade-up delay-3 mt-6 w-48 h-0.5 bg-rust" />
 
         {stats.length > 0 && (
-          <div className="mt-6 flex flex-wrap gap-x-8 gap-y-2 font-stat text-xs sm:text-sm text-brass">
+          <div className="fade-up delay-4 mt-6 flex flex-wrap gap-x-8 gap-y-2 font-stat text-xs sm:text-sm text-brass">
             {stats.map((s) => (
               <span key={s.label}>
                 {s.label} {s.value}
@@ -93,7 +93,7 @@ export default function Hero({
         {ctaLabel && (
           <a
             href={ctaHref}
-            className="inline-block mt-10 bg-rust text-dusk px-6 py-3 rounded font-body text-sm sm:text-base hover:opacity-90 transition-opacity"
+            className="fade-up delay-5 btn-primary inline-block mt-10 bg-rust text-dusk px-6 py-3 rounded font-body text-sm sm:text-base"
           >
             {ctaLabel}
           </a>

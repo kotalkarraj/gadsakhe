@@ -1,4 +1,5 @@
 import Hero from "@/components/Hero";
+import ScrollReveal from "@/components/ScrollReveal";
 import { treks } from "@/data/treks";
 
 export default function Home() {
@@ -31,42 +32,43 @@ export default function Home() {
           </h2>
           <a
             href="/blogs"
-            className="font-body text-sm text-rust-text hover:underline"
+            className="link-grow font-body text-sm text-rust-text"
           >
             View all →
           </a>
         </div>
         <div className="grid sm:grid-cols-3 gap-5">
-          {treks.map((trek) => (
-            <a
-              key={trek.slug}
-              href={`/blogs/${trek.slug}`}
-              className="block relative rounded overflow-hidden h-40 group"
-            >
-              <div className="absolute inset-0 bg-canopy" />
-              {trek.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={trek.image}
-                  alt={trek.name}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              )}
-              <div className="absolute inset-0 bg-canopy/80 group-hover:bg-canopy/70 transition-colors" />
-              <div className="relative p-5 h-full flex flex-col justify-between text-limestone">
-                <div className="font-stat text-xs text-brass tracking-wider">
-                  {trek.code}
-                </div>
-                <div>
-                  <div className="font-body text-lg leading-snug mb-1">
-                    {trek.name}
+          {treks.map((trek, i) => (
+            <ScrollReveal key={trek.slug} delayMs={i * 80}>
+              <a
+                href={`/blogs/${trek.slug}`}
+                className="card-lift block relative rounded overflow-hidden h-40"
+              >
+                <div className="absolute inset-0 bg-canopy" />
+                {trek.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={trek.image}
+                    alt={trek.name}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                )}
+                <div className="absolute inset-0 bg-canopy/80" />
+                <div className="relative p-5 h-full flex flex-col justify-between text-limestone">
+                  <div className="font-stat text-xs text-brass tracking-wider">
+                    {trek.code}
                   </div>
-                  <div className="font-body text-sm text-moss">
-                    {trek.region} · {trek.difficulty}
+                  <div>
+                    <div className="font-body text-lg leading-snug mb-1">
+                      {trek.name}
+                    </div>
+                    <div className="font-body text-sm text-moss">
+                      {trek.region} · {trek.difficulty}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </ScrollReveal>
           ))}
         </div>
       </section>
