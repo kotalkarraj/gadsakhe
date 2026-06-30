@@ -63,7 +63,7 @@ export default function Home() {
                       {trek.name}
                     </div>
                     <div className="font-body text-sm text-moss">
-                      {trek.region} · {trek.difficulty}
+                      {trek.area} · {trek.difficulty}
                     </div>
                   </div>
                 </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type { Trek } from "@/data/treks";
+import { MACRO_REGIONS, type Trek } from "@/data/treks";
 import ScrollReveal from "@/components/ScrollReveal";
 
 function formatDate(dateStr: string) {
@@ -19,41 +19,78 @@ type Props = {
 const ALL = "All";
 
 export default function TrekFilterableList({ treks }: Props) {
-  const [region, setRegion] = useState<string>(ALL);
+  const [macroRegion, setMacroRegion] = useState<string>(ALL);
+  const [area, setArea] = useState<string>(ALL);
   const [difficulty, setDifficulty] = useState<string>(ALL);
 
-  const regions = useMemo(
-    () => [ALL, ...Array.from(new Set(treks.map((t) => t.region)))],
-    [treks]
-  );
+  // Region options come from the fixed MACRO_REGIONS list (not just
+  // whatever treks currently exist), so e.g. "Himalayas" can show up as a
+  // filter even before any Himalayan treks have been added yet.
+  const macroRegionOptions = [ALL, ...MACRO_REGIONS];
+
+  // Area (district-level) options only make sense within the selected
+  // region, and are still derived from the actual trek data.
+  const areaOptions = useMemo(() => {
+    const relevant =
+      macroRegion === ALL
+        ? treks
+        : treks.filter((t) => t.macroRegion === macroRegion);
+    return [ALL, ...Array.from(new Set(relevant.map((t) => t.area)))];
+  }, [treks, macroRegion]);
+
   const difficulties = [ALL, "Easy", "Moderate", "Difficult"];
 
   const filtered = treks.filter(
     (t) =>
-      (region === ALL || t.region === region) &&
+      (macroRegion === ALL || t.macroRegion === macroRegion) &&
+      (area === ALL || t.area === area) &&
       (difficulty === ALL || t.difficulty === difficulty)
   );
 
   return (
     <div className="flex flex-col gap-8">
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 sm:gap-8">
         <div className="flex flex-col gap-2">
           <span className="font-stat text-xs text-moss tracking-wider">
             REGION
           </span>
           <div className="flex flex-wrap gap-2">
-            {regions.map((r) => (
+            {macroRegionOptions.map((r) => (
               <button
                 key={r}
-                onClick={() => setRegion(r)}
+                onClick={() => {
+                  setMacroRegion(r);
+                  setArea(ALL); // reset area when region changes
+                }}
                 className={`font-body text-sm px-3 py-1.5 rounded border transition-colors ${
-                  region === r
+                  macroRegion === r
                     ? "bg-rust text-dusk border-rust"
                     : "bg-transparent text-dusk border-moss/40 hover:border-rust"
                 }`}
               >
                 {r}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="font-stat text-xs text-moss tracking-wider">
+            AREA
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {areaOptions.map((a) => (
+              <button
+                key={a}
+                onClick={() => setArea(a)}
+                className={`font-body text-sm px-3 py-1.5 rounded border transition-colors ${
+                  area === a
+                    ? "bg-rust text-dusk border-rust"
+                    : "bg-transparent text-dusk border-moss/40 hover:border-rust"
+                }`}
+              >
+                {a}
               </button>
             ))}
           </div>
@@ -129,7 +166,8 @@ export default function TrekFilterableList({ treks }: Props) {
                   </div>
 
                   <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 font-stat text-xs text-moss">
-                    <span>{trek.region}</span>
+                    <span>{trek.macroRegion}</span>
+                    <span>{trek.area}</span>
                     <span>{trek.difficulty}</span>
                     <span>ALT {trek.stats.altitude}</span>
                     <span>DIST {trek.stats.distance}</span>

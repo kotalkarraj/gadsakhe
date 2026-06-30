@@ -2,11 +2,18 @@
 // the database (Supabase) — every other file that imports from here
 // won't need to change when that happens.
 
+// Top-level region groupings (mountain ranges), independent of which
+// treks currently exist in them — this lets us list "Himalayas" as a
+// browsable/filterable region even before any Himalayan treks are added.
+export const MACRO_REGIONS = ["Sahyadris", "Himalayas"] as const;
+export type MacroRegion = (typeof MACRO_REGIONS)[number];
+
 export type Trek = {
   slug: string;
   code: string;
   name: string;
-  region: string;
+  macroRegion: MacroRegion; // top-level grouping, e.g. "Sahyadris"
+  area: string; // local sub-area/district, e.g. "Pune district"
   difficulty: "Easy" | "Moderate" | "Difficult";
   date: string;
   author: string;
@@ -26,14 +33,15 @@ export const treks: Trek[] = [
     slug: "rajgad-monsoon-trail",
     code: "FORT 01",
     name: "Rajgad monsoon trail",
-    region: "Pune district",
+    macroRegion: "Sahyadris",
+    area: "Pune district",
     difficulty: "Moderate",
     date: "2026-06-14",
     author: "Aisha Patil",
     excerpt:
       "Clouds rolled over the Bale Killa as we climbed through knee-deep grass, the trail slick from a week of rain.",
     image:
-      "https://images.unsplash.com/photo-1578869944808-57cd4a3bef7b?fm=jpg&q=70&w=1400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1673970825861-3469f8fe01d3?fm=jpg&q=70&w=1400&auto=format&fit=crop",
     stats: { altitude: "1340m", distance: "12km", duration: "6hr" },
     body: [
       "We started from Gunjavane base village a little after sunrise, the kind of grey monsoon morning where the hills look like they're breathing mist. Rajgad doesn't ease you in — the first hour is a steady climb through slick stone steps, and by the time we reached Chor Darwaza, everyone's shoes had given up being waterproof.",
@@ -54,7 +62,8 @@ export const treks: Trek[] = [
     slug: "harishchandragad-night-climb",
     code: "FORT 02",
     name: "Harishchandragad night climb",
-    region: "Ahmednagar",
+    macroRegion: "Sahyadris",
+    area: "Ahmednagar",
     difficulty: "Difficult",
     date: "2026-05-02",
     author: "Rohan Deshmukh",
@@ -79,7 +88,8 @@ export const treks: Trek[] = [
     slug: "lohagad-after-the-rains",
     code: "FORT 03",
     name: "Lohagad after the rains",
-    region: "Pune district",
+    macroRegion: "Sahyadris",
+    area: "Pune district",
     difficulty: "Easy",
     date: "2026-04-20",
     author: "Aisha Patil",

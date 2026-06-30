@@ -55,7 +55,8 @@ export default async function BlogPostPage({ params }: Props) {
             {trek.name.toUpperCase()}
           </h1>
           <p className="mt-2 font-stat text-xs text-moss tracking-widest">
-            {trek.region.toUpperCase()} · {trek.difficulty.toUpperCase()}
+            {trek.macroRegion.toUpperCase()} · {trek.area.toUpperCase()} ·{" "}
+            {trek.difficulty.toUpperCase()}
           </p>
         </div>
       </section>
@@ -86,7 +87,11 @@ export default async function BlogPostPage({ params }: Props) {
                 <dl className="flex flex-col gap-2.5 font-body text-sm">
                   <div className="flex justify-between gap-3">
                     <dt className="text-moss">Region</dt>
-                    <dd className="text-right">{trek.region}</dd>
+                    <dd className="text-right">{trek.macroRegion}</dd>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-moss">Area</dt>
+                    <dd className="text-right">{trek.area}</dd>
                   </div>
                   <div className="flex justify-between gap-3">
                     <dt className="text-moss">Difficulty</dt>
