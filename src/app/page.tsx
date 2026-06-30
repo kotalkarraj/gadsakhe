@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import ScrollReveal from "@/components/ScrollReveal";
+import RegionExplorer from "@/components/RegionExplorer";
 import { treks } from "@/data/treks";
 
 export default function Home() {
@@ -72,6 +73,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <RegionExplorer />
     </main>
   );
 }

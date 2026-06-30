@@ -1,7 +1,13 @@
 import { treks } from "@/data/treks";
 import TrekFilterableList from "@/components/TrekFilterableList";
 
-export default function BlogsPage() {
+type Props = {
+  searchParams: Promise<{ region?: string; area?: string }>;
+};
+
+export default async function BlogsPage({ searchParams }: Props) {
+  const params = await searchParams;
+
   return (
     <main className="flex flex-col">
       {/* Page header */}
@@ -21,7 +27,11 @@ export default function BlogsPage() {
       {/* Filterable blog list */}
       <section className="bg-limestone px-6 sm:px-10 py-14">
         <div className="max-w-5xl mx-auto">
-          <TrekFilterableList treks={treks} />
+          <TrekFilterableList
+            treks={treks}
+            initialRegion={params.region}
+            initialArea={params.area}
+          />
         </div>
       </section>
     </main>

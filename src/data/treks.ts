@@ -2,18 +2,18 @@
 // the database (Supabase) — every other file that imports from here
 // won't need to change when that happens.
 
-// Top-level region groupings (mountain ranges), independent of which
-// treks currently exist in them — this lets us list "Himalayas" as a
-// browsable/filterable region even before any Himalayan treks are added.
-export const MACRO_REGIONS = ["Sahyadris", "Himalayas"] as const;
+// Top-level region groupings (states), independent of which treks
+// currently exist in them — this lets us list "Himachal Pradesh" as a
+// browsable/filterable region even before any treks are added there.
+export const MACRO_REGIONS = ["Maharashtra", "Himachal Pradesh"] as const;
 export type MacroRegion = (typeof MACRO_REGIONS)[number];
 
 export type Trek = {
   slug: string;
   code: string;
   name: string;
-  macroRegion: MacroRegion; // top-level grouping, e.g. "Sahyadris"
-  area: string; // local sub-area/district, e.g. "Pune district"
+  macroRegion: MacroRegion; // top-level grouping, e.g. "Maharashtra"
+  area: string; // local sub-area/district, e.g. "Pune"
   difficulty: "Easy" | "Moderate" | "Difficult";
   date: string;
   author: string;
@@ -33,8 +33,8 @@ export const treks: Trek[] = [
     slug: "rajgad-monsoon-trail",
     code: "FORT 01",
     name: "Rajgad monsoon trail",
-    macroRegion: "Sahyadris",
-    area: "Pune district",
+    macroRegion: "Maharashtra",
+    area: "Pune",
     difficulty: "Moderate",
     date: "2026-06-14",
     author: "Aisha Patil",
@@ -62,7 +62,7 @@ export const treks: Trek[] = [
     slug: "harishchandragad-night-climb",
     code: "FORT 02",
     name: "Harishchandragad night climb",
-    macroRegion: "Sahyadris",
+    macroRegion: "Maharashtra",
     area: "Ahmednagar",
     difficulty: "Difficult",
     date: "2026-05-02",
@@ -88,8 +88,8 @@ export const treks: Trek[] = [
     slug: "lohagad-after-the-rains",
     code: "FORT 03",
     name: "Lohagad after the rains",
-    macroRegion: "Sahyadris",
-    area: "Pune district",
+    macroRegion: "Maharashtra",
+    area: "Pune",
     difficulty: "Easy",
     date: "2026-04-20",
     author: "Aisha Patil",
@@ -110,3 +110,12 @@ export const treks: Trek[] = [
     ],
   },
 ];
+
+// Returns the distinct areas that currently have at least one trek within
+// a given region, sorted alphabetically. Used by the homepage region tabs.
+export function getAreasForRegion(macroRegion: MacroRegion): string[] {
+  const areas = treks
+    .filter((t) => t.macroRegion === macroRegion)
+    .map((t) => t.area);
+  return Array.from(new Set(areas)).sort();
+}

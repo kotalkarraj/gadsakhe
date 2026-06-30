@@ -14,18 +14,26 @@ function formatDate(dateStr: string) {
 
 type Props = {
   treks: Trek[];
+  initialRegion?: string;
+  initialArea?: string;
 };
 
 const ALL = "All";
 
-export default function TrekFilterableList({ treks }: Props) {
-  const [macroRegion, setMacroRegion] = useState<string>(ALL);
-  const [area, setArea] = useState<string>(ALL);
+export default function TrekFilterableList({
+  treks,
+  initialRegion,
+  initialArea,
+}: Props) {
+  const [macroRegion, setMacroRegion] = useState<string>(
+    initialRegion || ALL
+  );
+  const [area, setArea] = useState<string>(initialArea || ALL);
   const [difficulty, setDifficulty] = useState<string>(ALL);
 
   // Region options come from the fixed MACRO_REGIONS list (not just
-  // whatever treks currently exist), so e.g. "Himalayas" can show up as a
-  // filter even before any Himalayan treks have been added yet.
+  // whatever treks currently exist), so e.g. "Himachal Pradesh" can show
+  // up as a filter even before any treks there have been added yet.
   const macroRegionOptions = [ALL, ...MACRO_REGIONS];
 
   // Area (district-level) options only make sense within the selected
