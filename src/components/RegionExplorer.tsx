@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { MACRO_REGIONS, getAreasForRegion, type MacroRegion } from "@/data/treks";
 
 export default function RegionExplorer() {
@@ -8,6 +8,17 @@ export default function RegionExplorer() {
     MACRO_REGIONS[0]
   );
   const [query, setQuery] = useState("");
+  const [visible, setVisible] = useState(true);
+
+  const switchRegion = useCallback((region: MacroRegion) => {
+    // Fade out → switch → fade in
+    setVisible(false);
+    setTimeout(() => {
+      setActiveRegion(region);
+      setQuery("");
+      setVisible(true);
+    }, 180);
+  }, []);
 
   const areas = getAreasForRegion(activeRegion);
   const filteredAreas = query
@@ -40,10 +51,7 @@ export default function RegionExplorer() {
           {MACRO_REGIONS.map((region) => (
             <button
               key={region}
-              onClick={() => {
-                setActiveRegion(region);
-                setQuery("");
-              }}
+              onClick={() => switchRegion(region)}
               className={`relative pb-3 font-body text-base transition-colors ${
                 activeRegion === region
                   ? "text-dusk"
@@ -52,34 +60,42 @@ export default function RegionExplorer() {
             >
               {region}
               {activeRegion === region && (
-                <span className="absolute left-0 right-0 -bottom-px h-0.5 bg-rust" />
+                <span className="absolute left-0 right-0 -bottom-px h-0.5 bg-rust transition-all" />
               )}
             </button>
           ))}
         </div>
 
-        {/* Areas within the active region */}
-        {filteredAreas.length === 0 ? (
-          <p className="font-body text-dusk/60 text-sm py-6">
-            {areas.length === 0
-              ? `No treks in ${activeRegion} yet — check back soon.`
-              : "No areas match your search."}
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {filteredAreas.map((area) => (
-              <a
-                key={area}
-                href={`/blogs?region=${encodeURIComponent(
-                  activeRegion
-                )}&area=${encodeURIComponent(area)}`}
-                className="card-lift bg-canopy text-limestone rounded px-5 py-4 font-body text-sm"
-              >
-                {area}
-              </a>
-            ))}
-          </div>
-        )}
+        {/* Areas — fade in/out on tab switch */}
+        <div
+          style={{
+            opacity: visible ? 1 : 0,
+            transform: visible ? "translateY(0)" : "translateY(6px)",
+            transition: "opacity 0.25s ease, transform 0.25s ease",
+          }}
+        >
+          {filteredAreas.length === 0 ? (
+            <p className="font-body text-dusk/60 text-sm py-6">
+              {areas.length === 0
+                ? `No treks in ${activeRegion} yet — check back soon.`
+                : "No areas match your search."}
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {filteredAreas.map((area) => (
+                <a
+                  key={area}
+                  href={`/blogs?region=${encodeURIComponent(
+                    activeRegion
+                  )}&area=${encodeURIComponent(area)}`}
+                  className="card-lift bg-canopy text-limestone rounded px-5 py-4 font-body text-sm"
+                >
+                  {area}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
