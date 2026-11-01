@@ -71,7 +71,7 @@ export default async function AdminHome({ searchParams }: Props) {
       )}
       {error && (
         <p className="rounded-2xl bg-red-50 px-5 py-3 font-body text-sm text-red-800 ring-1 ring-red-200">
-          Couldn&apos;t load stories: {error.message}. Did you run supabase/schema.sql?
+          Couldn&apos;t load stories: {error.message}. Has the database migration been applied?
         </p>
       )}
 

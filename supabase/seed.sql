@@ -1,6 +1,6 @@
 -- Optional: copies the three original placeholder stories into the
 -- database as published posts, so the site looks the same once connected.
--- Run after schema.sql (SQL Editor → New query → Run).
+-- Run after the migration has created the tables (SQL Editor → New query → Run).
 
 insert into public.posts
   (slug, code, name, macro_region, area, difficulty, trek_date, author_id, author_name,

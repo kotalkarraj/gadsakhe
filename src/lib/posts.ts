@@ -8,7 +8,7 @@ import {
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createPublicClient } from "@/lib/supabase/public";
 
-// A row of the `posts` table (see supabase/schema.sql)
+// A row of the `posts` table (see supabase/migrations)
 export type PostRow = {
   id: string;
   slug: string;

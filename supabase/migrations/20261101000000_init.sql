@@ -1,6 +1,9 @@
--- Gadsakhe database schema.
--- Run this once in the Supabase dashboard → SQL Editor → New query → Run.
--- Safe to re-run: everything is "if not exists" / "or replace".
+-- Gadsakhe database schema: author profiles, posts, row-level security
+-- and the trek-images storage bucket.
+--
+-- Applied automatically by the Supabase GitHub integration when this file
+-- reaches the main branch. It is also safe to run by hand in the SQL Editor
+-- (everything is "if not exists" / "or replace").
 
 -- ---------------------------------------------------------------------------
 -- Profiles: one row per author, created automatically on sign-up.

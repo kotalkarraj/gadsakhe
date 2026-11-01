@@ -1,0 +1,9 @@
+# Minimal Supabase CLI / GitHub integration config.
+# Database changes live in supabase/migrations/ and are applied to the
+# production database when they are merged into main.
+project_id = "gadsakhe"
+
+[db.seed]
+# Only used for local/preview databases, never production
+enabled = true
+sql_paths = ["./seed.sql"]

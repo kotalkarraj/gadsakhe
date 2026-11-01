@@ -12,10 +12,21 @@ The website reads stories from a Supabase database and authors manage them at
 
 ## 2. Create the tables
 
-1. In the project, open **SQL Editor → New query**.
-2. Paste everything from [`schema.sql`](schema.sql) and click **Run**.
-3. Optional: run [`seed.sql`](seed.sql) the same way to copy the three
-   original stories into the database.
+The tables are defined in [`migrations/`](migrations). With the GitHub
+integration connected (**Project Settings → Integrations → GitHub**, working
+directory `.`, "Deploy to production" on for `main`), Supabase applies them
+automatically whenever they're pushed to `main`. Check progress under
+**Project Settings → Integrations → GitHub** or the repo's commit status.
+
+Without the integration, open **SQL Editor → New query**, paste the migration
+file and click **Run**.
+
+To change the database later, add a new file to `migrations/` (named
+`YYYYMMDDHHMMSS_description.sql`) instead of editing an old one.
+
+Optional: run [`seed.sql`](seed.sql) in the SQL Editor to copy the three
+original placeholder stories into the database. (The integration never runs
+it on production.)
 
 ## 3. Connect the website
 
