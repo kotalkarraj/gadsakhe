@@ -1,4 +1,4 @@
-import { treks } from "@/data/treks";
+import { getPublishedTreks } from "@/lib/posts";
 import TrekFilterableList from "@/components/TrekFilterableList";
 
 type Props = {
@@ -6,7 +6,7 @@ type Props = {
 };
 
 export default async function BlogsPage({ searchParams }: Props) {
-  const params = await searchParams;
+  const [params, treks] = await Promise.all([searchParams, getPublishedTreks()]);
 
   return (
     <main className="flex flex-col">

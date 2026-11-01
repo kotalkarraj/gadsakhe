@@ -5,11 +5,11 @@ import Link from "next/link";
 import {
   MACRO_REGIONS,
   getAreasForRegion,
-  treks,
   type MacroRegion,
+  type Trek,
 } from "@/data/treks";
 
-export default function RegionExplorer() {
+export default function RegionExplorer({ treks }: { treks: Trek[] }) {
   const [activeRegion, setActiveRegion] = useState<MacroRegion>(
     MACRO_REGIONS[0]
   );
@@ -28,7 +28,7 @@ export default function RegionExplorer() {
     return () => window.removeEventListener("resize", measure);
   }, [activeRegion]);
 
-  const areas = getAreasForRegion(activeRegion);
+  const areas = getAreasForRegion(treks, activeRegion);
   const filteredAreas = query
     ? areas.filter((a) => a.toLowerCase().includes(query.toLowerCase()))
     : areas;

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { treks } from "@/data/treks";
+import { getPublishedTrek, getPublishedTreks } from "@/lib/posts";
 import TrekImage from "@/components/TrekImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import CountUp from "@/components/CountUp";
@@ -13,9 +13,13 @@ function formatDate(dateStr: string) {
   });
 }
 
-// Pre-builds a static page for every trek at build time (good for SEO,
-// and works fine with placeholder data now or real database data later).
-export function generateStaticParams() {
+// Pre-builds a static page for every published trek at build time (good
+// for SEO). Posts published later render on first visit, and saving a post
+// in /admin refreshes its page.
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const treks = await getPublishedTreks();
   return treks.map((trek) => ({ slug: trek.slug }));
 }
 
@@ -25,14 +29,17 @@ type Props = {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const index = treks.findIndex((t) => t.slug === slug);
-  const trek = treks[index];
+  const [trek, treks] = await Promise.all([
+    getPublishedTrek(slug),
+    getPublishedTreks(),
+  ]);
 
   if (!trek) {
     notFound();
   }
 
-  const next = treks[(index + 1) % treks.length];
+  const index = treks.findIndex((t) => t.slug === slug);
+  const next = treks[(index + 1) % treks.length] ?? trek;
   const readMins = Math.max(
     1,
     Math.round(trek.body.join(" ").split(/\s+/).length / 200)

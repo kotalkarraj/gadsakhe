@@ -39,6 +39,9 @@ export default function SiteFooter() {
             <Link href="/#regions" className="link-grow text-limestone/80 hover:text-limestone">
               REGIONS
             </Link>
+            <Link href="/admin" className="link-grow text-limestone/50 hover:text-limestone">
+              AUTHORS
+            </Link>
           </nav>
         </div>
 

@@ -379,3 +379,25 @@ body::after {
     animation: none;
   }
 }
+
+/* ---------- Admin forms ---------- */
+.admin-input {
+  width: 100%;
+  border-radius: 0.875rem;
+  border: 1px solid rgba(14, 23, 18, 0.15);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--sahyadri-dusk);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.admin-input::placeholder {
+  color: rgba(14, 23, 18, 0.35);
+}
+.admin-input:focus {
+  outline: none;
+  background: #fff;
+  border-color: var(--laterite-rust);
+  box-shadow: 0 0 0 4px rgba(95, 178, 122, 0.15);
+}

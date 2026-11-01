@@ -1,6 +1,6 @@
-// Placeholder trek data. Later, this will be replaced by a fetch from
-// the database (Supabase) — every other file that imports from here
-// won't need to change when that happens.
+// Trek types and placeholder stories. Real posts come from Supabase via
+// lib/posts.ts; these placeholders are only shown until the database is
+// connected (supabase/seed.sql copies them into it).
 
 // Top-level region groupings (states), independent of which treks
 // currently exist in them — this lets us list "Himachal Pradesh" as a
@@ -8,13 +8,16 @@
 export const MACRO_REGIONS = ["Maharashtra", "Himachal Pradesh"] as const;
 export type MacroRegion = (typeof MACRO_REGIONS)[number];
 
+export const DIFFICULTIES = ["Easy", "Moderate", "Difficult"] as const;
+export type Difficulty = (typeof DIFFICULTIES)[number];
+
 export type Trek = {
   slug: string;
   code: string;
   name: string;
   macroRegion: MacroRegion; // top-level grouping, e.g. "Maharashtra"
   area: string; // local sub-area/district, e.g. "Pune"
-  difficulty: "Easy" | "Moderate" | "Difficult";
+  difficulty: Difficulty;
   date: string;
   author: string;
   excerpt: string;
@@ -28,7 +31,7 @@ export type Trek = {
   tips: string[]; // practical trek tips, shown in the sidebar card
 };
 
-export const treks: Trek[] = [
+export const placeholderTreks: Trek[] = [
   {
     slug: "rajgad-monsoon-trail",
     code: "FORT 01",
@@ -113,7 +116,10 @@ export const treks: Trek[] = [
 
 // Returns the distinct areas that currently have at least one trek within
 // a given region, sorted alphabetically. Used by the homepage region tabs.
-export function getAreasForRegion(macroRegion: MacroRegion): string[] {
+export function getAreasForRegion(
+  treks: Trek[],
+  macroRegion: MacroRegion
+): string[] {
   const areas = treks
     .filter((t) => t.macroRegion === macroRegion)
     .map((t) => t.area);

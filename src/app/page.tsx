@@ -5,32 +5,43 @@ import ScrollReveal from "@/components/ScrollReveal";
 import RegionExplorer from "@/components/RegionExplorer";
 import TrekCard from "@/components/TrekCard";
 import CountUp from "@/components/CountUp";
-import { treks } from "@/data/treks";
+import { getPublishedTreks } from "@/lib/posts";
 
-export default function Home() {
-  // Later: this will be the latest/featured post pulled from the database.
-  const featured = treks[0];
-  const [lead, ...rest] = treks;
+// Re-check the database at most once a minute; saving a post in /admin
+// also refreshes these pages immediately.
+export const revalidate = 60;
 
-  const totalKm = treks.reduce((sum, t) => sum + parseFloat(t.stats.distance), 0);
-  const highest = Math.max(...treks.map((t) => parseFloat(t.stats.altitude)));
+const num = (v: string) => parseFloat(v) || 0;
+
+export default async function Home() {
+  const treks = await getPublishedTreks();
+  // Latest story with a photo leads the hero; falls back to the latest story
+  const featured = treks.find((t) => t.image) ?? treks[0];
+  const [lead, ...rest] = treks.slice(0, 3);
+
+  const totalKm = treks.reduce((sum, t) => sum + num(t.stats.distance), 0);
+  const highest = Math.max(0, ...treks.map((t) => num(t.stats.altitude)));
 
   return (
     <main className="flex flex-col">
       <Hero
-        imageSrc={featured.image}
-        imageAlt={`Aerial view of ${featured.name}`}
+        imageSrc={featured?.image}
+        imageAlt={featured ? `Aerial view of ${featured.name}` : ""}
         title="Gadsakhe"
         subtitleNative="गडसखे"
         subtitleTranslation="companion of the forts"
         tagline="TREK STORIES FROM THE SAHYADRIS"
-        stats={[
-          { label: "ALT", value: featured.stats.altitude },
-          { label: "DIST", value: featured.stats.distance },
-          { label: "DUR", value: featured.stats.duration },
-        ]}
-        ctaLabel="Read the latest story"
-        ctaHref={`/blogs/${featured.slug}`}
+        stats={
+          featured
+            ? [
+                { label: "ALT", value: featured.stats.altitude },
+                { label: "DIST", value: featured.stats.distance },
+                { label: "DUR", value: featured.stats.duration },
+              ].filter((s) => s.value)
+            : []
+        }
+        ctaLabel={featured ? "Read the latest story" : undefined}
+        ctaHref={featured ? `/blogs/${featured.slug}` : undefined}
       />
 
       {/* Intro */}
@@ -76,7 +87,7 @@ export default function Home() {
         </div>
       </section>
 
-      <Marquee items={treks.map((t) => t.name.split(" ")[0]).concat(["Sahyadri", "Monsoon", "Konkan Kada"])} />
+      <Marquee items={treks.slice(0, 6).map((t) => t.name.split(" ")[0]).concat(["Sahyadri", "Monsoon", "Konkan Kada"])} />
 
       {/* Featured treks */}
       <section className="px-6 sm:px-10 py-24">
@@ -98,10 +109,17 @@ export default function Home() {
             </Link>
           </div>
 
+          {!lead && (
+            <p className="rounded-3xl border border-dashed border-dusk/20 py-16 text-center font-display text-2xl italic">
+              The first story is still on the trail.
+            </p>
+          )}
           <div className="grid gap-5 sm:grid-cols-2">
-            <ScrollReveal className="sm:row-span-2">
-              <TrekCard trek={lead} tall />
-            </ScrollReveal>
+            {lead && (
+              <ScrollReveal className="sm:row-span-2">
+                <TrekCard trek={lead} tall />
+              </ScrollReveal>
+            )}
             {rest.map((trek, i) => (
               <ScrollReveal key={trek.slug} delayMs={(i + 1) * 120}>
                 <TrekCard trek={trek} />
@@ -111,7 +129,7 @@ export default function Home() {
         </div>
       </section>
 
-      <RegionExplorer />
+      <RegionExplorer treks={treks} />
     </main>
   );
 }
