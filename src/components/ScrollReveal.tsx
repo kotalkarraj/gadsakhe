@@ -9,10 +9,9 @@ type Props = {
 };
 
 /**
- * Wraps any content so it fades + slides up into view the first time it
- * scrolls into the viewport. Used for trek cards on the homepage and
- * blogs listing so the page feels alive while scrolling, without
- * re-triggering every time you scroll past it again.
+ * Wraps any content so it fades, un-blurs and slides up into view the
+ * first time it scrolls into the viewport. Doesn't re-trigger when you
+ * scroll past it again.
  */
 export default function ScrollReveal({
   children,
@@ -28,23 +27,23 @@ export default function ScrollReveal({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          if (delayMs) {
-            setTimeout(() => el.classList.add("is-visible"), delayMs);
-          } else {
-            el.classList.add("is-visible");
-          }
+          el.classList.add("is-visible");
           observer.unobserve(el);
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [delayMs]);
+  }, []);
 
   return (
-    <div ref={ref} className={`scroll-fade ${className}`}>
+    <div
+      ref={ref}
+      className={`scroll-fade ${className}`}
+      style={{ "--reveal-delay": `${delayMs}ms` } as React.CSSProperties}
+    >
       {children}
     </div>
   );

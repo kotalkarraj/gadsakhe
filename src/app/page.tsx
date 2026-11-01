@@ -1,18 +1,26 @@
+import Link from "next/link";
 import Hero from "@/components/Hero";
+import Marquee from "@/components/Marquee";
 import ScrollReveal from "@/components/ScrollReveal";
 import RegionExplorer from "@/components/RegionExplorer";
+import TrekCard from "@/components/TrekCard";
+import CountUp from "@/components/CountUp";
 import { treks } from "@/data/treks";
 
 export default function Home() {
   // Later: this will be the latest/featured post pulled from the database.
   const featured = treks[0];
+  const [lead, ...rest] = treks;
+
+  const totalKm = treks.reduce((sum, t) => sum + parseFloat(t.stats.distance), 0);
+  const highest = Math.max(...treks.map((t) => parseFloat(t.stats.altitude)));
 
   return (
     <main className="flex flex-col">
       <Hero
         imageSrc={featured.image}
         imageAlt={`Aerial view of ${featured.name}`}
-        title="GADSAKHE"
+        title="Gadsakhe"
         subtitleNative="गडसखे"
         subtitleTranslation="companion of the forts"
         tagline="TREK STORIES FROM THE SAHYADRIS"
@@ -21,56 +29,85 @@ export default function Home() {
           { label: "DIST", value: featured.stats.distance },
           { label: "DUR", value: featured.stats.duration },
         ]}
-        ctaLabel="Read the latest story →"
+        ctaLabel="Read the latest story"
         ctaHref={`/blogs/${featured.slug}`}
       />
 
-      {/* Featured treks */}
-      <section className="bg-limestone px-6 sm:px-10 py-14 max-w-5xl mx-auto w-full">
-        <div className="flex items-baseline justify-between mb-8">
-          <h2 className="font-display text-xl sm:text-2xl text-dusk tracking-wide">
-            RECENT TRAILS
-          </h2>
-          <a
-            href="/blogs"
-            className="link-grow font-body text-sm text-rust-text"
-          >
-            View all →
-          </a>
+      {/* Intro */}
+      <section className="px-6 sm:px-10 pt-16 pb-20">
+        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1fr_1.4fr]">
+          <ScrollReveal>
+            <p className="font-stat text-[11px] tracking-[0.3em] text-rust-text">
+              01 — THE JOURNAL
+            </p>
+          </ScrollReveal>
+          <ScrollReveal delayMs={100}>
+            <p className="font-display text-3xl sm:text-[2.6rem] font-light leading-[1.15] tracking-tight">
+              Wet stone steps, chai at 3am, and clouds rolling over
+              four-hundred-year-old ramparts.{" "}
+              <span className="italic text-rust-text">
+                Honest field notes from the forts of the Sahyadris
+              </span>{" "}
+              — written by the people who climbed them.
+            </p>
+          </ScrollReveal>
         </div>
-        <div className="grid sm:grid-cols-3 gap-5">
-          {treks.map((trek, i) => (
-            <ScrollReveal key={trek.slug} delayMs={i * 80}>
-              <a
-                href={`/blogs/${trek.slug}`}
-                className="card-lift block relative rounded overflow-hidden h-40"
-              >
-                <div className="absolute inset-0 bg-canopy" />
-                {trek.image && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={trek.image}
-                    alt={trek.name}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                )}
-                <div className="absolute inset-0 bg-canopy/80" />
-                <div className="relative p-5 h-full flex flex-col justify-between text-limestone">
-                  <div className="font-stat text-xs text-brass tracking-wider">
-                    {trek.code}
-                  </div>
-                  <div>
-                    <div className="font-body text-lg leading-snug mb-1">
-                      {trek.name}
-                    </div>
-                    <div className="font-body text-sm text-moss">
-                      {trek.area} · {trek.difficulty}
-                    </div>
-                  </div>
-                </div>
-              </a>
+
+        <div className="mx-auto mt-16 grid max-w-6xl grid-cols-3 border-t border-dusk/10">
+          {[
+            { value: `${treks.length}`, label: "Forts written up" },
+            { value: `${totalKm}km`, label: "Trail covered" },
+            { value: `${highest}m`, label: "Highest summit" },
+          ].map((s, i) => (
+            <ScrollReveal
+              key={s.label}
+              delayMs={i * 120}
+              className={`pt-8 ${i > 0 ? "border-l border-dusk/10 pl-4 sm:pl-8" : ""}`}
+            >
+              <CountUp
+                value={s.value}
+                className="block font-display text-4xl sm:text-6xl font-light tracking-tight"
+              />
+              <span className="mt-2 block font-stat text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-dusk/50">
+                {s.label}
+              </span>
             </ScrollReveal>
           ))}
+        </div>
+      </section>
+
+      <Marquee items={treks.map((t) => t.name.split(" ")[0]).concat(["Sahyadri", "Monsoon", "Konkan Kada"])} />
+
+      {/* Featured treks */}
+      <section className="px-6 sm:px-10 py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 flex items-end justify-between gap-6">
+            <ScrollReveal>
+              <p className="font-stat text-[11px] tracking-[0.3em] text-rust-text mb-4">
+                02 — RECENT TRAILS
+              </p>
+              <h2 className="font-display text-4xl sm:text-6xl font-light tracking-tight leading-[0.95]">
+                Fresh off <span className="italic">the ridge</span>
+              </h2>
+            </ScrollReveal>
+            <Link
+              href="/blogs"
+              className="link-grow shrink-0 font-body text-sm text-rust-text"
+            >
+              View all stories →
+            </Link>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <ScrollReveal className="sm:row-span-2">
+              <TrekCard trek={lead} tall />
+            </ScrollReveal>
+            {rest.map((trek, i) => (
+              <ScrollReveal key={trek.slug} delayMs={(i + 1) * 120}>
+                <TrekCard trek={trek} />
+              </ScrollReveal>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -1,16 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { MACRO_REGIONS, type Trek } from "@/data/treks";
-import ScrollReveal from "@/components/ScrollReveal";
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
+import TrekCard from "@/components/TrekCard";
 
 type Props = {
   treks: Trek[];
@@ -19,6 +12,41 @@ type Props = {
 };
 
 const ALL = "All";
+
+function Chips({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <span className="font-stat text-[10px] tracking-[0.25em] text-dusk/50">
+        {label}
+      </span>
+      <div className="flex flex-wrap gap-2">
+        {options.map((o) => (
+          <button
+            key={o}
+            onClick={() => onChange(o)}
+            className={`rounded-full px-4 py-1.5 font-body text-sm transition-all duration-300 active:scale-95 ${
+              value === o
+                ? "bg-dusk text-limestone shadow-md"
+                : "bg-white/60 text-dusk/70 ring-1 ring-dusk/10 hover:text-dusk hover:ring-dusk/30"
+            }`}
+          >
+            {o}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function TrekFilterableList({
   treks,
@@ -55,158 +83,75 @@ export default function TrekFilterableList({
       (difficulty === ALL || t.difficulty === difficulty)
   );
 
-  return (
-    <div className="flex flex-col gap-8">
-      {/* Filters — hide region filter if it was pre-set from the homepage tab */}
-      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-start gap-6 sm:gap-10">
+  // Changing any filter remounts the grid so the cards re-stagger in
+  const gridKey = `${macroRegion}|${area}|${difficulty}`;
 
+  return (
+    <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-8 rounded-3xl bg-white/40 p-6 sm:p-8 ring-1 ring-dusk/10 backdrop-blur sm:flex-row sm:flex-wrap sm:gap-12">
         {/* Region filter — only shown when browsing all treks, not when arriving from a region tab */}
         {!initialRegion && (
-          <div className="flex flex-col gap-2">
-            <span className="font-stat text-xs text-moss tracking-wider">
-              REGION
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {macroRegionOptions.map((r) => (
-                <button
-                  key={r}
-                  onClick={() => {
-                    setMacroRegion(r);
-                    setArea(ALL);
-                  }}
-                  className={`font-body text-sm px-3 py-1.5 rounded border transition-colors ${
-                    macroRegion === r
-                      ? "bg-rust text-dusk border-rust"
-                      : "bg-transparent text-dusk border-moss/40 hover:border-rust"
-                  }`}
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
-          </div>
+          <Chips
+            label="REGION"
+            options={macroRegionOptions}
+            value={macroRegion}
+            onChange={(r) => {
+              setMacroRegion(r);
+              setArea(ALL);
+            }}
+          />
         )}
-
-        {/* Area filter — always shown, options narrow to the selected region */}
-        <div className="flex flex-col gap-2">
-          <span className="font-stat text-xs text-moss tracking-wider">
-            {initialRegion ? `AREAS IN ${initialRegion.toUpperCase()}` : "AREA"}
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {areaOptions.map((a) => (
-              <button
-                key={a}
-                onClick={() => setArea(a)}
-                className={`font-body text-sm px-3 py-1.5 rounded border transition-colors ${
-                  area === a
-                    ? "bg-rust text-dusk border-rust"
-                    : "bg-transparent text-dusk border-moss/40 hover:border-rust"
-                }`}
-              >
-                {a}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Difficulty filter — always shown */}
-        <div className="flex flex-col gap-2">
-          <span className="font-stat text-xs text-moss tracking-wider">
-            DIFFICULTY
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {difficulties.map((d) => (
-              <button
-                key={d}
-                onClick={() => setDifficulty(d)}
-                className={`font-body text-sm px-3 py-1.5 rounded border transition-colors ${
-                  difficulty === d
-                    ? "bg-rust text-dusk border-rust"
-                    : "bg-transparent text-dusk border-moss/40 hover:border-rust"
-                }`}
-              >
-                {d}
-              </button>
-            ))}
-          </div>
-        </div>
+        <Chips
+          label={initialRegion ? `AREAS IN ${initialRegion.toUpperCase()}` : "AREA"}
+          options={areaOptions}
+          value={area}
+          onChange={setArea}
+        />
+        <Chips
+          label="DIFFICULTY"
+          options={difficulties}
+          value={difficulty}
+          onChange={setDifficulty}
+        />
       </div>
 
-      {/* Active region breadcrumb — shown when arriving from homepage region tab */}
-      {initialRegion && (
-        <div className="flex items-center gap-3 -mt-2">
-          <span className="font-stat text-xs text-moss tracking-wider">SHOWING</span>
-          <span className="font-body text-sm bg-canopy text-limestone px-3 py-1 rounded">
-            {macroRegion}
-          </span>
-          <a
-            href="/blogs"
-            className="font-stat text-xs text-dusk/40 hover:text-rust-text transition-colors tracking-wider"
-          >
-            ✕ clear
-          </a>
-        </div>
-      )}
-
-      {/* Result count */}
-      <p className="font-stat text-xs text-moss tracking-wider">
-        {filtered.length} {filtered.length === 1 ? "RESULT" : "RESULTS"}
-      </p>
-
-      {/* Grid — same card format as homepage */}
-      {filtered.length === 0 ? (
-        <p className="font-body text-dusk/70 py-12 text-center">
-          No treks match these filters yet. Try a different combination.
+      <div className="flex items-center gap-4">
+        <p className="font-stat text-[11px] tracking-[0.25em] text-dusk/50">
+          <span className="text-dusk">{String(filtered.length).padStart(2, "0")}</span>{" "}
+          {filtered.length === 1 ? "RESULT" : "RESULTS"}
         </p>
+        {initialRegion && (
+          <>
+            <span className="rounded-full bg-dusk px-3 py-1 font-body text-xs text-limestone">
+              {macroRegion}
+            </span>
+            <Link
+              href="/blogs"
+              className="font-stat text-[11px] tracking-[0.2em] text-dusk/40 transition-colors hover:text-rust-text"
+            >
+              ✕ CLEAR
+            </Link>
+          </>
+        )}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="fade-up rounded-3xl border border-dashed border-dusk/20 py-20 text-center">
+          <p className="font-display text-3xl italic">Nothing on this trail.</p>
+          <p className="mt-2 font-body text-sm text-dusk/60">
+            No treks match these filters yet. Try a different combination.
+          </p>
+        </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div key={gridKey} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((trek, i) => (
-            <ScrollReveal key={trek.slug} delayMs={i * 80}>
-              <a
-                href={`/blogs/${trek.slug}`}
-                className="card-lift block relative rounded overflow-hidden h-52 group"
-              >
-                {/* Background colour fallback */}
-                <div className="absolute inset-0 bg-canopy" />
-
-                {/* Trek photo */}
-                {trek.image && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={trek.image}
-                    alt={trek.name}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                )}
-
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-canopy/75 group-hover:bg-canopy/65 transition-colors" />
-
-                {/* Content */}
-                <div className="relative p-5 h-full flex flex-col justify-between text-limestone">
-                  {/* Top: code + date */}
-                  <div className="flex items-center gap-3 font-stat text-xs text-brass tracking-wider">
-                    <span>{trek.code}</span>
-                    <span className="text-moss">{formatDate(trek.date)}</span>
-                  </div>
-
-                  {/* Bottom: name + meta */}
-                  <div>
-                    <h2 className="font-body text-lg leading-snug mb-1 group-hover:text-rust transition-colors">
-                      {trek.name}
-                    </h2>
-                    <p className="font-body text-xs text-limestone/70 leading-relaxed mb-2 line-clamp-2">
-                      {trek.excerpt}
-                    </p>
-                    <div className="font-stat text-xs text-moss flex flex-wrap gap-x-4 gap-y-1">
-                      <span>{trek.area}</span>
-                      <span>{trek.difficulty}</span>
-                      <span>ALT {trek.stats.altitude}</span>
-                    </div>
-                  </div>
-                </div>
-              </a>
-            </ScrollReveal>
+            <div
+              key={trek.slug}
+              className="fade-up"
+              style={{ animationDelay: `${i * 90}ms` }}
+            >
+              <TrekCard trek={trek} />
+            </div>
           ))}
         </div>
       )}

@@ -1,5 +1,9 @@
-import { treks } from "@/data/treks";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { treks } from "@/data/treks";
+import TrekImage from "@/components/TrekImage";
+import ScrollReveal from "@/components/ScrollReveal";
+import CountUp from "@/components/CountUp";
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-IN", {
@@ -21,188 +25,169 @@ type Props = {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const trek = treks.find((t) => t.slug === slug);
+  const index = treks.findIndex((t) => t.slug === slug);
+  const trek = treks[index];
 
   if (!trek) {
     notFound();
   }
 
+  const next = treks[(index + 1) % treks.length];
+  const readMins = Math.max(
+    1,
+    Math.round(trek.body.join(" ").split(/\s+/).length / 200)
+  );
+
   return (
     <main className="flex flex-col">
-      {/* Full-width banner image with title overlay */}
-      <section className="relative overflow-hidden bg-dusk text-limestone">
-        {trek.image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={trek.image}
-            alt={trek.name}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        )}
-        {/* Dark overlay so the title stays readable over any photo */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(28,43,34,0.55) 0%, rgba(28,43,34,0.85) 100%)",
-          }}
-        />
-        <div className="relative max-w-7xl mx-auto px-6 sm:px-10 py-16 sm:py-24">
-          <div className="font-stat text-xs text-brass tracking-wider mb-2">
-            {trek.code}
-          </div>
-          <h1 className="font-display text-3xl sm:text-5xl tracking-wide">
-            {trek.name.toUpperCase()}
+      {/* Full-bleed banner — the card image morphs into this */}
+      <section className="relative flex min-h-[78svh] items-end overflow-hidden bg-dusk text-limestone">
+        <TrekImage trek={trek} />
+        <div className="absolute inset-0 bg-gradient-to-t from-dusk via-dusk/50 to-dusk/20" />
+
+        <div className="relative mx-auto w-full max-w-6xl px-6 sm:px-10 pt-40 pb-16">
+          <p className="fade-up mb-6 flex flex-wrap items-center gap-3 font-stat text-[11px] tracking-[0.25em] text-brass">
+            <span className="rounded-full bg-dusk/40 px-3 py-1 ring-1 ring-brass/30 backdrop-blur">
+              {trek.code}
+            </span>
+            <span className="text-moss">
+              {trek.macroRegion.toUpperCase()} · {trek.area.toUpperCase()} ·{" "}
+              {trek.difficulty.toUpperCase()}
+            </span>
+          </p>
+          <h1 className="font-display font-light text-[clamp(2.8rem,8vw,6.5rem)] leading-[0.92] tracking-[-0.03em] max-w-4xl">
+            {trek.name.split(" ").map((word, i) => (
+              <span key={i} className="mask-line mr-[0.22em]">
+                <span style={{ animationDelay: `${120 + i * 80}ms` }}>{word}</span>
+              </span>
+            ))}
           </h1>
-          <p className="mt-2 font-stat text-xs text-moss tracking-widest">
-            {trek.macroRegion.toUpperCase()} · {trek.area.toUpperCase()} ·{" "}
-            {trek.difficulty.toUpperCase()}
+          <p
+            className="fade-up mt-8 flex flex-wrap gap-x-6 gap-y-2 font-stat text-xs tracking-[0.15em] text-limestone/70"
+            style={{ animationDelay: "600ms" }}
+          >
+            <span>BY {trek.author.toUpperCase()}</span>
+            <span>{formatDate(trek.date).toUpperCase()}</span>
+            <span>{readMins} MIN READ</span>
           </p>
         </div>
       </section>
 
-      {/* Two-column body: info card (left) + story (right) */}
-      <section className="bg-limestone px-6 sm:px-10 py-12">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-12">
-          {/* Info sidebar — scrolls normally with the page, not sticky */}
-          <aside className="w-full lg:w-80 flex-shrink-0">
-            <div className="relative bg-canopy rounded overflow-hidden flex flex-col">
-              {/* Small card photo (same image as banner, cropped square-ish) */}
-              <div className="relative w-full h-40 bg-dusk flex-shrink-0">
-                {trek.image && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={trek.image}
-                    alt={trek.name}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                )}
-              </div>
-
-              {/* Stats table */}
-              <div className="relative p-5 text-limestone">
-                <div className="font-stat text-xs text-brass tracking-wider mb-3">
-                  TREK INFO
-                </div>
-                <dl className="flex flex-col gap-2.5 font-body text-sm">
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-moss">Region</dt>
-                    <dd className="text-right">{trek.macroRegion}</dd>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-moss">Area</dt>
-                    <dd className="text-right">{trek.area}</dd>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-moss">Difficulty</dt>
-                    <dd className="text-right">{trek.difficulty}</dd>
-                  </div>
-                  <div className="h-px bg-moss/30 my-1" />
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-moss">Altitude</dt>
-                    <dd className="text-right font-stat">
-                      {trek.stats.altitude}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-moss">Distance</dt>
-                    <dd className="text-right font-stat">
-                      {trek.stats.distance}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-moss">Duration</dt>
-                    <dd className="text-right font-stat">
-                      {trek.stats.duration}
-                    </dd>
-                  </div>
-                </dl>
-              </div>
-
-              {/* Trek tips + contour texture filling remaining card height,
-                  so short tip lists never leave visibly blank space */}
-              <div className="relative flex-1 flex flex-col">
-                {/* Contour-line texture, anchored to the bottom of the card,
-                    fills whatever space is left below the tips */}
-                <svg
-                  className="absolute inset-0 w-full h-full pointer-events-none"
-                  viewBox="0 0 300 300"
-                  preserveAspectRatio="xMidYMax slice"
-                  aria-hidden="true"
-                >
-                  <g
-                    stroke="var(--limestone)"
-                    strokeWidth="1"
-                    fill="none"
-                    opacity="0.08"
-                  >
-                    <path d="M -20 260 Q 80 230, 160 255 T 340 240" />
-                    <path d="M -20 230 Q 90 200, 160 225 T 340 210" />
-                    <path d="M -20 200 Q 100 170, 160 195 T 340 180" />
-                    <path d="M -20 170 Q 110 145, 160 165 T 340 150" />
-                    <path d="M -20 290 Q 70 265, 160 285 T 340 270" />
-                  </g>
-                </svg>
-
-                {trek.tips.length > 0 && (
-                  <div className="relative px-5 pb-5">
-                    <div className="h-px bg-moss/30 mb-4" />
-                    <div className="font-stat text-xs text-brass tracking-wider mb-3">
-                      TREK TIPS
-                    </div>
-                    <ul className="flex flex-col gap-2.5">
-                      {trek.tips.map((tip, i) => (
-                        <li
-                          key={i}
-                          className="font-body text-xs leading-relaxed text-limestone pl-3.5 relative"
-                        >
-                          <span className="absolute left-0 text-brass">
-                            ·
-                          </span>
-                          {tip}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Minimum height so the texture has room to show even
-                    when tips are short */}
-                <div className="min-h-16" />
-              </div>
+      {/* Stat strip */}
+      <section className="border-b border-dusk/10 px-6 sm:px-10">
+        <dl className="mx-auto grid max-w-6xl grid-cols-3">
+          {[
+            { label: "ALTITUDE", value: trek.stats.altitude },
+            { label: "DISTANCE", value: trek.stats.distance },
+            { label: "DURATION", value: trek.stats.duration },
+          ].map((s, i) => (
+            <div
+              key={s.label}
+              className={`py-8 ${i > 0 ? "border-l border-dusk/10 pl-4 sm:pl-8" : ""}`}
+            >
+              <dt className="font-stat text-[10px] tracking-[0.25em] text-dusk/50">
+                {s.label}
+              </dt>
+              <dd className="mt-2 font-display text-3xl sm:text-5xl font-light tracking-tight">
+                <CountUp value={s.value} durationMs={1200} />
+              </dd>
             </div>
-          </aside>
+          ))}
+        </dl>
+      </section>
 
-          {/* Story column */}
-          <article className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 font-stat text-xs text-moss tracking-wider mb-8 pb-6 border-b border-moss/20">
-              <span>{trek.author}</span>
-              <span>·</span>
-              <span>{formatDate(trek.date)}</span>
-            </div>
-
-            <div className="flex flex-col gap-6 max-w-2xl">
+      {/* Story + tips */}
+      <section className="px-6 sm:px-10 py-20">
+        <div className="mx-auto flex max-w-6xl flex-col gap-16 lg:flex-row lg:gap-20">
+          <article className="min-w-0 flex-1">
+            <div className="flex max-w-2xl flex-col gap-7">
               {trek.body.map((paragraph, i) => (
-                <p
-                  key={i}
-                  className="font-body text-base sm:text-lg leading-relaxed text-dusk"
-                >
-                  {paragraph}
-                </p>
+                <ScrollReveal key={i}>
+                  <p
+                    className={`font-body text-lg leading-[1.8] text-dusk/85 ${
+                      i === 0 ? "drop-cap text-xl text-dusk" : ""
+                    }`}
+                  >
+                    {paragraph}
+                  </p>
+                </ScrollReveal>
               ))}
             </div>
-
-            <div className="mt-12 pt-6 border-t border-moss/20 max-w-2xl">
-              <a
-                href="/blogs"
-                className="link-grow font-body text-sm text-rust-text"
-              >
-                ← Back to all trek stories
-              </a>
-            </div>
           </article>
+
+          {trek.tips.length > 0 && (
+            <aside className="w-full lg:w-80 shrink-0">
+              <div className="lg:sticky lg:top-28">
+                <ScrollReveal>
+                  <div className="relative overflow-hidden rounded-3xl bg-canopy p-7 text-limestone">
+                    <svg
+                      className="absolute inset-0 h-full w-full pointer-events-none"
+                      viewBox="0 0 300 300"
+                      preserveAspectRatio="xMidYMax slice"
+                      aria-hidden="true"
+                    >
+                      <g stroke="var(--limestone)" strokeWidth="1" fill="none" opacity="0.07">
+                        <path d="M -20 260 Q 80 230, 160 255 T 340 240" />
+                        <path d="M -20 230 Q 90 200, 160 225 T 340 210" />
+                        <path d="M -20 200 Q 100 170, 160 195 T 340 180" />
+                        <path d="M -20 170 Q 110 145, 160 165 T 340 150" />
+                      </g>
+                    </svg>
+                    <p className="relative font-stat text-[10px] tracking-[0.3em] text-brass">
+                      FIELD NOTES
+                    </p>
+                    <ol className="relative mt-6 flex flex-col gap-5">
+                      {trek.tips.map((tip, i) => (
+                        <li key={i} className="flex gap-4">
+                          <span className="font-stat text-[11px] text-moss pt-0.5">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <span className="font-body text-sm leading-relaxed text-limestone/85">
+                            {tip}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                </ScrollReveal>
+              </div>
+            </aside>
+          )}
         </div>
       </section>
+
+      {/* Next story */}
+      {next.slug !== trek.slug && (
+        <section className="px-6 sm:px-10 pb-24">
+          <div className="mx-auto max-w-6xl">
+            <Link
+              href={`/blogs/${next.slug}`}
+              className="group relative flex items-end overflow-hidden rounded-3xl bg-dusk h-72 text-limestone"
+            >
+              <TrekImage trek={next} />
+              <div className="absolute inset-0 bg-gradient-to-r from-dusk via-dusk/70 to-transparent transition-opacity duration-700 group-hover:opacity-80" />
+              <div className="relative flex w-full items-end justify-between gap-6 p-8 sm:p-10">
+                <div>
+                  <p className="font-stat text-[10px] tracking-[0.3em] text-brass">
+                    NEXT STORY
+                  </p>
+                  <p className="mt-3 font-display text-3xl sm:text-5xl font-light tracking-tight">
+                    {next.name}
+                  </p>
+                </div>
+                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-limestone text-dusk text-xl transition-transform duration-500 group-hover:-rotate-45 group-hover:scale-110">
+                  →
+                </span>
+              </div>
+            </Link>
+            <div className="mt-8">
+              <Link href="/blogs" className="link-grow font-body text-sm text-rust-text">
+                ← Back to all trek stories
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
     </main>
   );
 }

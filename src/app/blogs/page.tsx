@@ -11,22 +11,52 @@ export default async function BlogsPage({ searchParams }: Props) {
   return (
     <main className="flex flex-col">
       {/* Page header */}
-      <section className="bg-dusk text-limestone px-6 sm:px-10 py-16">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="font-display text-3xl sm:text-5xl tracking-wide">
-            TREK STORIES
-          </h1>
-          <p className="mt-3 font-stat text-xs sm:text-sm tracking-widest text-moss">
-            {treks.length} {treks.length === 1 ? "STORY" : "STORIES"} FROM THE
-            SAHYADRIS
+      <section className="relative overflow-hidden bg-dusk px-6 sm:px-10 pt-40 pb-24 text-limestone">
+        <svg
+          className="contour absolute inset-0 h-full w-full"
+          viewBox="0 0 680 300"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <g stroke="var(--old-bell-brass)" strokeWidth="0.6" fill="none" opacity="0.25">
+            <path d="M -20 260 Q 150 210, 340 250 T 700 230" />
+            <path d="M -20 225 Q 160 175, 340 215 T 700 195" />
+            <path d="M -20 190 Q 170 140, 340 180 T 700 160" />
+            <path d="M -20 155 Q 180 110, 340 145 T 700 125" />
+            <path d="M -20 120 Q 190 80, 340 110 T 700 95" />
+          </g>
+        </svg>
+        <div className="mist left-[30%] top-[10%] h-72 w-[60%] bg-moss/10" />
+
+        <div className="relative mx-auto max-w-6xl">
+          <p className="fade-up mb-6 flex items-center gap-3 font-stat text-[11px] tracking-[0.3em] text-moss">
+            <span className="grow-x inline-block h-px w-10 bg-moss" />
+            {String(treks.length).padStart(2, "0")}{" "}
+            {treks.length === 1 ? "STORY" : "STORIES"} FROM THE SAHYADRIS
           </p>
-          <div className="mt-6 w-48 h-0.5 bg-rust" />
+          <h1 className="font-display font-light text-[clamp(3rem,9vw,7rem)] leading-[0.9] tracking-[-0.03em]">
+            <span className="mask-line">
+              <span style={{ animationDelay: "100ms" }}>Trek</span>
+            </span>{" "}
+            <span className="mask-line">
+              <span className="italic text-brass" style={{ animationDelay: "220ms" }}>
+                stories
+              </span>
+            </span>
+          </h1>
+          <p
+            className="fade-up mt-6 max-w-md font-body text-limestone/60"
+            style={{ animationDelay: "500ms" }}
+          >
+            Filter by region, area or how hard you want your legs to hurt
+            tomorrow.
+          </p>
         </div>
       </section>
 
       {/* Filterable blog list */}
-      <section className="bg-limestone px-6 sm:px-10 py-14">
-        <div className="max-w-5xl mx-auto">
+      <section className="px-6 sm:px-10 py-16">
+        <div className="mx-auto max-w-6xl">
           <TrekFilterableList
             treks={treks}
             initialRegion={params.region}
